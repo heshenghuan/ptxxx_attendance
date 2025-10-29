@@ -56,16 +56,17 @@ def main():
     with open("./config.yaml", "r", encoding="utf-8") as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
     print('配置文件加载成功')
-    for station in cfg.keys():
-        url = cfg[station]['base_url']
-        cookies = cfg[station]['cookies']
-        print(f'正在处理 {station} 站点')
+    for station in cfg['stations']:
+        name = station['name']
+        url = station['base_url']
+        cookies = station['cookies']
+        print(f'正在处理 {name} 站点')
         session = login(url, cookies)
         if session:
             print('登陆成功，正在签到...')
             checkin(session, url)
         else:
-            print(f'{station} 站点登录失败，跳过签到')
+            print(f'{name} 站点登录失败，跳过签到')
         print('-----------------------------------')
 
 

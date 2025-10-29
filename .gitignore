@@ -1,5 +1,7 @@
 tmp/
 
+test*
+
 config.yaml
 history.txt
 
