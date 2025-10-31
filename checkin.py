@@ -12,7 +12,6 @@ def login(url, cookies):
     '''
     获取登陆会话
     '''
-    print('使用已有cookie登录')
     cookies = requests.utils.cookiejar_from_dict(
         {
             'c_secure_pass': cookies
@@ -47,26 +46,31 @@ def checkin(session, url):
             signinrank = re.search(r'今日(?:签到|簽到)排名：(<b>\d+</b> / <b>\d+</b>)', checkin_page.text, re.DOTALL).group(1)
             signinrank = signinrank.replace('<b>', '').replace('</b>', '')
             print(nowtime + ' 签到成功    连续签到：' + signindays + '天    获得魔力值：' + integral + '    签到排名：' + signinrank)
+            return True
         else:
             print("签到失败，可能是今日已签到或网络异常")
+            return False
     except Exception as e:
         print("Attendance error:", e)
+        return False
 
 def main():
     with open("./config.yaml", "r", encoding="utf-8") as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
-    print('配置文件加载成功')
+    # 打印当前日期
+    print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), '配置文件加载成功')
     for station in cfg['stations']:
         name = station['name']
         url = station['base_url']
         cookies = station['cookies']
-        print(f'正在处理 {name} 站点')
+        print(f'正在处理 {name} 站点\t', end='')
         session = login(url, cookies)
         if session:
-            print('登陆成功，正在签到...')
-            checkin(session, url)
+            result = checkin(session, url)
+            if not result:
+                print(f'{name} 站点签到失败')
         else:
-            print(f'{name} 站点登录失败，跳过签到')
+            print(f'{name} 站点登录失败')
         print('-----------------------------------')
 
 
