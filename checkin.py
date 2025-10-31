@@ -21,7 +21,7 @@ def login(url, cookies):
     bt_session.cookies = cookies
     try:
         torrent_url = f'https://{url}/torrents.php'
-        test = bt_session.get(torrent_url, headers=_headers)
+        test = bt_session.get(torrent_url, headers=_headers, timeout=60)
         if test.status_code != 200 or test.url != torrent_url:
             print('测试获取torrents.php失败，疑似cookie失效，请重新登录')
             return None
