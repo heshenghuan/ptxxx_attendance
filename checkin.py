@@ -14,13 +14,8 @@ def login(url, cookies):
     '''
     获取登陆会话
     '''
-    cookies = requests.utils.cookiejar_from_dict(
-        {
-            'c_secure_pass': cookies
-        }
-    )
     bt_session = requests.session()
-    bt_session.cookies = cookies
+    bt_session.cookies = requests.utils.cookiejar_from_dict(cookies)
     try:
         torrent_url = f'https://{url}/torrents.php'
         test = bt_session.get(torrent_url, headers=_headers, timeout=60)
@@ -98,10 +93,10 @@ def main():
     # 记录失败的站点
     failed_stations = []
     for station in cfg['stations']:
+        print('-----------------------------------')
         success = process_station(station)
         if not success:
             failed_stations.append(station['name'])
-        print('-----------------------------------')
     
     # 检查签到结果，如果有失败，发送邮件通知
     if failed_stations:
